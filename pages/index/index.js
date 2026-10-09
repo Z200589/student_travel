@@ -28,12 +28,12 @@ Page({
     packingProgress: 0,
     // 快捷操作
     quickActions: [
-      { emoji: '✏️', label: '创建旅行', action: 'onCreateTrip' },
-      { emoji: '📅', label: '行程管理', action: 'onManageItinerary' },
-      { emoji: '💰', label: '预算管理', action: 'onManageBudget' },
-      { emoji: '🧳', label: '行李清单', action: 'onManagePacking' },
-      { emoji: '🍜', label: '美食清单', action: 'onManageFood' },
-      { emoji: '📖', label: '旅行日记', action: 'onManageDiary' }
+      { icon: 'edit', label: '创建旅行', action: 'onCreateTrip' },
+      { icon: 'calendar', label: '行程管理', action: 'onManageItinerary' },
+      { icon: 'wallet', label: '预算管理', action: 'onManageBudget' },
+      { icon: 'bag', label: '行李清单', action: 'onManagePacking' },
+      { icon: 'food', label: '美食清单', action: 'onManageFood' },
+      { icon: 'diary', label: '旅行日记', action: 'onManageDiary' }
     ],
     // 加载状态
     loading: true
@@ -110,6 +110,7 @@ Page({
         if (todayData) {
           this.setData({
             todayPlan: {
+              tripId: ongoing.id,
               destination: ongoing.destination,
               status: '进行中',
               activities: (todayData.activities || todayData.items || []).slice(0, 4).map(a => ({
@@ -223,7 +224,7 @@ Page({
 
   /** 跳转到旅行详情 */
   goToTripDetail(e) {
-    const id = e.currentTarget.dataset.id || e.detail.tripId
+    const id = (e.currentTarget && e.currentTarget.dataset.id) || (e.detail && e.detail.tripId)
     if (id) {
       wx.navigateTo({ url: `/pages/trip-detail/trip-detail?tripId=${id}` })
     }

@@ -6,7 +6,7 @@
  */
 const themeBehavior = require('../../utils/theme-behavior')
 const diaryService = require('../../services/diary-service')
-const { MOCK_TRIPS } = require('../../data/mock-trips')
+const tripService = require('../../services/trip-service')
 const { formatDate } = require('../../utils/date-utils')
 
 Page({
@@ -34,7 +34,7 @@ Page({
   },
 
   onLoad() {
-    const trips = MOCK_TRIPS
+    const trips = tripService.getAllTrips()
     const tripMap = {}
     trips.forEach(t => { tripMap[t.id] = t })
     const moodOptions = diaryService.getMoodOptions()
@@ -61,10 +61,14 @@ Page({
   async loadDiaries() {
     this.setData({ loading: true })
     try {
-      const diaries = this.data.selectedTripId
+      const trips = tripService.getAllTrips()
+      const tripMap = {}
+      trips.forEach(trip => { tripMap[trip.id] = trip })
+      const entries = this.data.selectedTripId
         ? diaryService.getDiariesByTripId(this.data.selectedTripId)
         : diaryService.getAllDiaries()
-      this.setData({ diaries, loading: false })
+      const diaries = entries.filter(entry => tripMap[entry.tripId])
+      this.setData({ diaries, trips, tripMap, loading: false })
     } catch (e) {
       console.error('加载日记失败', e)
       this.setData({ loading: false })
@@ -75,6 +79,10 @@ Page({
     const tripId = e.currentTarget.dataset.id
     this.setData({ selectedTripId: tripId })
     this.loadDiaries()
+  },
+
+  onShow() {
+    return this.loadDiaries()
   },
 
   onShowCreate() {

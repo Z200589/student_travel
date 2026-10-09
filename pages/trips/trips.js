@@ -92,7 +92,7 @@ Page({
    * 跳转到旅行详情
    */
   goToTripDetail(e) {
-    const tripId = e.detail ? e.detail.tripId : (e.currentTarget.dataset.id || '')
+    const tripId = (e.detail && e.detail.tripId) || (e.currentTarget && e.currentTarget.dataset.id)
     if (tripId) {
       wx.navigateTo({ url: `/pages/trip-detail/trip-detail?tripId=${tripId}` })
     }

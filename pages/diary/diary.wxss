@@ -317,3 +317,9 @@
 .col-half {
   flex: 1;
 }
+
+/* Phone layout and touch targets */
+.fab-btn { min-width: 48px; min-height: 48px; right: 24rpx; bottom: calc(32rpx + env(safe-area-inset-bottom)); }
+.page, .container { padding-bottom: calc(144rpx + env(safe-area-inset-bottom)); }
+
+.modal-content { box-sizing: border-box; padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }

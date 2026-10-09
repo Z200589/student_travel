@@ -5,6 +5,7 @@
   <view class="expense-info">
     <text class="expense-desc">{{expense.description}}</text>
     <text class="expense-date">{{expense.date}}</text>
+    <text wx:if="{{expense.split}}" class="expense-date">AA 共同消费 · 详情见 AA 账本</text>
   </view>
   <text class="expense-amount">-¥{{expense.amount}}</text>
 </view>

@@ -1,0 +1,11 @@
+project.private.config.json
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+*.mv.db
+*.trace.db
+backend/target/
+backend/data/
+backend/application-local*.properties

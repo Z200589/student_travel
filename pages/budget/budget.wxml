@@ -2,6 +2,7 @@
   <loading-state wx:if="{{loading}}" text="加载预算数据..." />
 
   <block wx:elif="{{overview}}">
+    <button class="btn btn-secondary mb-md" bindtap="onOpenAA"><image class="button-icon" src="/assets/icons/action-wallet.png" />同行 AA · 成员与结算</button>
     <!-- 预算概览卡片 -->
     <view class="overview-card card">
       <view class="overview-main">
@@ -34,6 +35,7 @@
     </view>
 
     <!-- 分类明细 -->
+    <view class="card"><expense-charts expenses="{{expenses}}" dark="{{isDarkMode}}" /></view>
     <view class="section-header">
       <text class="section-title">分类支出</text>
     </view>
@@ -57,7 +59,7 @@
 
     <!-- 消费列表 -->
     <view class="section-header mt-md">
-      <text class="section-title">消费记录</text>
+      <text class="section-title">消费记录</text><text class="font-xs text-secondary">点击记录可编辑或删除</text>
     </view>
     <view class="expense-list" wx:if="{{expenses.length > 0}}">
       <view class="card">
@@ -75,18 +77,19 @@
 
   <!-- 浮动添加按钮 -->
   <view class="fab-btn" bind:tap="onShowAdd">
-    <text class="fab-icon">+</text>
+    <image class="fab-symbol" src="/assets/icons/plus-white.png" mode="aspectFit" />
   </view>
 
   <!-- 添加消费弹窗 -->
   <view class="modal-mask" wx:if="{{showAddModal}}" bind:tap="onCloseAdd">
     <view class="modal-content" catch:tap="">
       <view class="modal-header">
-        <text class="modal-title">添加消费</text>
+        <text class="modal-title">{{editingId ? '编辑普通消费' : '添加普通消费'}}</text>
         <text class="modal-close" bind:tap="onCloseAdd">✕</text>
       </view>
 
       <!-- 分类选择 -->
+      <view class="font-sm text-secondary mb-md">本笔不参与 AA；共同消费请使用预算页的“同行 AA”入口。</view>
       <text class="modal-label">分类</text>
       <view class="category-pills">
         <view
@@ -125,7 +128,7 @@
         <view class="modal-input picker-display">{{newExpense.date || '请选择日期'}}</view>
       </picker>
 
-      <button class="btn btn-primary btn-block mt-lg" bind:tap="onSaveExpense">保存</button>
+      <button class="btn btn-primary btn-block mt-lg" loading="{{saving}}" disabled="{{saving}}" bind:tap="onSaveExpense">保存</button>
     </view>
   </view>
 </view>

@@ -10,15 +10,7 @@
   <view class="ring-right" style="width:{{size/2}}rpx; height:{{size}}rpx; right: 0;">
     <view
       class="ring-half ring-right-half"
-      style="
-        width: {{size/2}}rpx;
-        height: {{size}}rpx;
-        border: {{strokeWidth}}rpx solid {{color}};
-        border-left: none;
-        border-radius: 0 {{size/2}}rpx {{size/2}}rpx 0;
-        box-sizing: border-box;
-        transform: rotate({{rightRotate}}deg);
-      "
+      style="width: {{size/2}}rpx; height: {{size}}rpx; border: {{strokeWidth}}rpx solid {{color}}; border-left: none; border-radius: 0 {{size/2}}rpx {{size/2}}rpx 0; box-sizing: border-box; transform: rotate({{rightRotate}}deg);"
     ></view>
   </view>
 
@@ -26,15 +18,7 @@
   <view class="ring-left" style="width:{{size/2}}rpx; height:{{size}}rpx; left: 0;">
     <view
       class="ring-half ring-left-half"
-      style="
-        width: {{size/2}}rpx;
-        height: {{size}}rpx;
-        border: {{strokeWidth}}rpx solid {{color}};
-        border-right: none;
-        border-radius: {{size/2}}rpx 0 0 {{size/2}}rpx;
-        box-sizing: border-box;
-        transform: rotate({{leftRotate}}deg);
-      "
+      style="width: {{size/2}}rpx; height: {{size}}rpx; border: {{strokeWidth}}rpx solid {{color}}; border-right: none; border-radius: {{size/2}}rpx 0 0 {{size/2}}rpx; box-sizing: border-box; transform: rotate({{leftRotate}}deg);"
     ></view>
   </view>
 

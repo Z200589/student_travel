@@ -2,7 +2,7 @@
   trip-card 旅行卡片组件
   展示旅行封面、目的地、日期、状态、预算进度和打包进度
 -->
-<view class="trip-card" bindtap="handleTap" style="{{trip.style || ''}}">
+<view class="trip-card" bindtap="handleTap">
   <!-- 封面图片区域，带渐变遮罩 -->
   <view class="card-cover">
     <image
@@ -24,12 +24,12 @@
   <!-- 卡片内容区域 -->
   <view class="card-body">
     <!-- 目的地名称 -->
-    <view class="destination">{{trip.destination}}</view>
+    <view class="destination">{{trip.destination}}<text wx:if="{{trip.isExample}}" class="font-sm text-hint"> · 示例</text></view>
 
     <!-- 日期范围 -->
     <view class="date-range">
       <text class="date-icon">📅</text>
-      <text class="date-text">{{startDate}} ~ {{endDate}}</text>
+      <text class="date-text">{{trip.startDate}} ~ {{trip.endDate}}</text>
     </view>
 
     <!-- 预算进度条 -->

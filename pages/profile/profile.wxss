@@ -139,3 +139,8 @@
   font-size: var(--font-xs);
   color: var(--text-hint);
 }
+
+.user-stats { box-sizing: border-box; gap: 12rpx; }
+.user-stat-item, .menu-left { min-width: 0; }
+.menu-item { min-height: 44px; gap: 12rpx; }
+.menu-right { flex-shrink: 0; }

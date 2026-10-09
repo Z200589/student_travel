@@ -6,7 +6,7 @@
  */
 const themeBehavior = require('../../utils/theme-behavior')
 const placeService = require('../../services/place-service')
-const { MOCK_TRIPS } = require('../../data/mock-trips')
+const tripService = require('../../services/trip-service')
 
 const FILTER_TABS = ['全部', '自然', '历史', '购物', '拍照', '美食', '亲子', '夜景']
 
@@ -26,7 +26,7 @@ Page({
 
   onLoad(options) {
     const tripId = options.tripId || 'trip_001'
-    const trip = MOCK_TRIPS.find(t => t.id === tripId)
+    const trip = tripService.getTripById(tripId)
     this.setData({
       tripId,
       destination: trip ? trip.destination : ''

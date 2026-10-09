@@ -6,7 +6,7 @@
  */
 const themeBehavior = require('../../utils/theme-behavior')
 const foodService = require('../../services/food-service')
-const { MOCK_TRIPS } = require('../../data/mock-trips')
+const tripService = require('../../services/trip-service')
 
 const FILTER_TABS = [
   { key: 'all', label: '全部' },
@@ -32,7 +32,7 @@ Page({
 
   onLoad(options) {
     const tripId = options.tripId || 'trip_001'
-    const trip = MOCK_TRIPS.find(t => t.id === tripId)
+    const trip = tripService.getTripById(tripId)
     this.setData({
       tripId,
       destination: trip ? trip.destination : ''

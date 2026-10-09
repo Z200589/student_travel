@@ -5,9 +5,7 @@
  */
 const themeBehavior = require('../../utils/theme-behavior')
 const dateUtils = require('../../utils/date-utils')
-const storageUtils = require('../../utils/storage-utils')
 const tripService = require('../../services/trip-service')
-const itineraryService = require('../../services/itinerary-service')
 
 Page({
   behaviors: [themeBehavior],
@@ -63,7 +61,7 @@ Page({
       }
 
       const totalDays = trip.itinerary.length
-      const safeIndex = Math.min(dayIndex, totalDays - 1)
+      const safeIndex = Math.max(0, Math.min(dayIndex, totalDays - 1))
       const dayData = trip.itinerary[safeIndex]
 
       if (!dayData) {
@@ -191,11 +189,8 @@ Page({
    * 新增活动到指定时间段
    */
   _addNewActivity(period, name) {
-    const trips = storageUtils.getStorage('trips') || []
-    const tripIdx = trips.findIndex(t => t.id === this.data.tripId)
-    if (tripIdx === -1) return
-
-    const trip = trips[tripIdx]
+    const trip = tripService.getTripById(this.data.tripId)
+    if (!trip) return
     const dayIdx = this.data.dayIndex
     if (!trip.itinerary || !trip.itinerary[dayIdx]) return
 
@@ -207,6 +202,7 @@ Page({
     const defaultTime = period === 'morning' ? '09:00' : period === 'afternoon' ? '14:00' : '19:00'
 
     trip.itinerary[dayIdx].activities.push({
+      id: `activity_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       time: defaultTime,
       name: name,
       activity: name,
@@ -218,14 +214,7 @@ Page({
       return (a.time || '').localeCompare(b.time || '')
     })
 
-    // 保存
-    trips[tripIdx] = trip
-    storageUtils.setStorage('trips', trips)
-
-    // 重新加载
-    this.loadDayPlan(this.data.tripId, this.data.dayIndex)
-
-    wx.showToast({ title: '活动已添加', icon: 'success' })
+    this._saveActivities(trip, '活动已添加')
   },
 
   /**
@@ -253,11 +242,8 @@ Page({
    * 更新活动
    */
   _updateActivity(index, period, newName) {
-    const trips = storageUtils.getStorage('trips') || []
-    const tripIdx = trips.findIndex(t => t.id === this.data.tripId)
-    if (tripIdx === -1) return
-
-    const trip = trips[tripIdx]
+    const trip = tripService.getTripById(this.data.tripId)
+    if (!trip) return
     const day = trip.itinerary && trip.itinerary[this.data.dayIndex]
     if (!day || !day.activities) return
 
@@ -267,16 +253,13 @@ Page({
     const target = periodList[index]
     if (!target) return
 
-    const globalIdx = allActs.indexOf(target)
+    const globalIdx = this._getActivityIndex(allActs, index, period)
     if (globalIdx !== -1) {
       allActs[globalIdx].name = newName
       allActs[globalIdx].activity = newName
     }
 
-    trips[tripIdx] = trip
-    storageUtils.setStorage('trips', trips)
-    this.loadDayPlan(this.data.tripId, this.data.dayIndex)
-    wx.showToast({ title: '已更新', icon: 'success' })
+    this._saveActivities(trip, '已更新')
   },
 
   /**
@@ -299,11 +282,8 @@ Page({
    * 执行删除
    */
   _removeActivity(index, period) {
-    const trips = storageUtils.getStorage('trips') || []
-    const tripIdx = trips.findIndex(t => t.id === this.data.tripId)
-    if (tripIdx === -1) return
-
-    const trip = trips[tripIdx]
+    const trip = tripService.getTripById(this.data.tripId)
+    if (!trip) return
     const day = trip.itinerary && trip.itinerary[this.data.dayIndex]
     if (!day || !day.activities) return
 
@@ -311,18 +291,38 @@ Page({
     const target = periodList[index]
     if (!target) return
 
-    const globalIdx = day.activities.indexOf(target)
+    const globalIdx = this._getActivityIndex(day.activities, index, period)
     if (globalIdx !== -1) {
       day.activities.splice(globalIdx, 1)
     }
 
-    trips[tripIdx] = trip
-    storageUtils.setStorage('trips', trips)
-    this.loadDayPlan(this.data.tripId, this.data.dayIndex)
-    wx.showToast({ title: '已删除', icon: 'success' })
+    this._saveActivities(trip, '已删除')
+  },
+
+  _saveActivities(trip, title) {
+    try {
+      tripService.updateTrip(trip.id, { itinerary: trip.itinerary })
+      this.loadDayPlan(this.data.tripId, this.data.dayIndex)
+      wx.showToast({ title, icon: 'success' })
+    } catch (error) {
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' })
+    }
   },
 
   // ==================== 辅助方法 ====================
+
+  // Storage reads return new objects. Resolve the selected position within
+  // its time period instead of comparing object identities across reads.
+  _getActivityIndex(activities, index, period) {
+    let position = 0
+    return activities.findIndex(activity => {
+      const hour = this._parseHour(activity.time)
+      const activityPeriod = hour >= 6 && hour < 12 ? 'morning'
+        : hour >= 12 && hour < 18 ? 'afternoon' : 'evening'
+      if (activityPeriod !== period) return false
+      return position++ === Number(index)
+    })
+  },
 
   /**
    * 解析时间字符串的小时数
@@ -330,7 +330,8 @@ Page({
   _parseHour(timeStr) {
     if (!timeStr) return 12
     const parts = timeStr.split(':')
-    return parseInt(parts[0], 10) || 12
+    const hour = parseInt(parts[0], 10)
+    return Number.isFinite(hour) ? hour : 12
   },
 
   /**

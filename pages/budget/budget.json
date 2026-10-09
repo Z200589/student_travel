@@ -2,6 +2,7 @@
   "navigationBarTitleText": "预算管理",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "expense-charts": "../../components/expense-charts/expense-charts",
     "budget-card": "../../components/budget-card/budget-card",
     "empty-state": "../../components/empty-state/empty-state",
     "loading-state": "../../components/loading-state/loading-state"

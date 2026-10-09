@@ -219,3 +219,43 @@
     transform: scale(1.2);
   }
 }
+
+.route-suggestion, .route-day {
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--border-color);
+}
+.route-preview {
+  margin-top: 32rpx;
+  padding: 24rpx;
+  background: var(--bg-card);
+  border-radius: 16rpx;
+}
+.route-pending {
+  margin-top: 24rpx;
+  padding: 20rpx;
+  color: var(--text-primary);
+  border: 1rpx solid var(--border-color);
+  border-radius: 12rpx;
+}
+
+/* Phone layout and touch targets */
+
+.date-row > view { min-width: 0; }
+.form-input, .form-textarea { min-width: 0; box-sizing: border-box; }
+.stepper-btn { min-width: 44px; min-height: 44px; }
+.style-pill, .pace-pill { min-height: 44px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+.bottom-bar { position: static; padding: 20rpx 24rpx calc(24rpx + env(safe-area-inset-bottom)); }
+.form-bottom-space { height: 24rpx; }
+.place-search-panel { background: var(--bg-card); border: 1rpx solid var(--border-color); border-radius: 24rpx; padding: 24rpx; margin-bottom: 24rpx; }
+.place-search-input { width: 100%; height: 48px; padding: 16rpx; box-sizing: border-box; background: var(--bg-primary); border-radius: 16rpx; margin-top: 16rpx; font-size: 28rpx; }
+.search-result { display: flex; align-items: center; gap: 16rpx; padding: 16rpx 0; border-bottom: 1rpx solid var(--border-color); }
+.search-result-info { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.search-result .btn { flex-shrink: 0; margin: 0; padding: 12rpx 24rpx; }
+.selected-place { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; font-size: 26rpx; line-height: 1.4; background: var(--brand-primary-light); color: var(--brand-primary); border-radius: 32rpx; padding: 16rpx 24rpx; margin: 12rpx 12rpx 0 0; white-space: normal; }
+.selected-place::after { border: none; }
+.route-suggestion .flex-between { gap: 16rpx; align-items: flex-start; }
+.route-suggestion .flex-between > text:last-child { flex-shrink: 0; }
+@media (max-width: 360px) {
+  .date-row { flex-direction: column; }
+  .pace-pill { min-width: 0; }
+}

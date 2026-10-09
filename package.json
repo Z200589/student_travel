@@ -4,7 +4,7 @@
   "description": "AI-Powered Travel Planning Assistant — WeChat Mini Program",
   "private": true,
   "scripts": {
-    "test": "node tests/run-tests.js"
+    "test": "node tests/run-tests.js && node --test tests/mvp-regressions.test.js tests/route-planner.test.js tests/aa.test.js tests/place-search.test.js tests/poster.test.js tests/expense-charts.test.js tests/backup.test.js tests/expense-edit.test.js tests/cloud.test.js tests/cloud-editor.test.js"
   },
   "repository": {
     "type": "git",

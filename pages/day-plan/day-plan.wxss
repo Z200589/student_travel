@@ -43,7 +43,7 @@
 
 /* ========== 可滚动区域 ========== */
 .day-scroll {
-  height: calc(100vh - 280rpx);
+  height: auto;
 }
 
 /* ========== 区块通用 ========== */
@@ -118,3 +118,11 @@
 .nav-row .btn:active {
   transform: scale(0.96);
 }
+
+/* Phone layout and touch targets */
+
+.page-header { padding-top: 28rpx; }
+.activity-card .flex-between > view { min-width: 0; }
+.activity-card .flex-row { flex-wrap: wrap; }
+.add-activity-btn { min-height: 44px; }
+.day-scroll { padding-bottom: env(safe-area-inset-bottom); }

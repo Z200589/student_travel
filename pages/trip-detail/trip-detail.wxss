@@ -86,7 +86,7 @@
 
 /* ========== 可滚动详情区域 ========== */
 .detail-scroll {
-  height: calc(100vh - 520rpx);
+  height: auto;
   padding-top: var(--spacing-md);
 }
 
@@ -188,3 +188,13 @@
   padding: 100rpx var(--spacing-lg);
   text-align: center;
 }
+
+/* Phone layout and touch targets */
+
+.hero-section { height: 380rpx; min-height: 180px; }
+.hero-destination { font-size: 44rpx; overflow-wrap: anywhere; }
+.quick-nav-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16rpx; }
+.quick-nav-label { font-size: 26rpx; }
+.stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stat-card { min-width: 0; margin-bottom: 0; }
+.detail-scroll { padding-bottom: env(safe-area-inset-bottom); }

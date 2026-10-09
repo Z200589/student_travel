@@ -1,7 +1,7 @@
 /**
  * 旅行计划服务模块
  * 提供旅行计划的 CRUD 操作，基于本地存储实现
- * 首次调用时自动加载模拟数据，后续操作读写本地缓存
+ * 新用户使用空列表；示例需显式添加，旧记录保持可读
  *
  * @module services/trip-service
  * @version 1.15.0
@@ -9,20 +9,34 @@
  * @author WuSuBuDuoMing
  */
 
-const { getStorage, setStorage } = require('../utils/storage-utils')
+const { setStorage } = require('../utils/storage-utils')
+const { readCollection } = require('../utils/collection-storage')
 const { generateId } = require('../utils/mock-utils')
-const { MOCK_TRIPS } = require('../data/mock-trips')
+const { spentForTrip, loadExpenses } = require('./expense-store')
+const { normalizeItinerary } = require('../utils/itinerary-model')
+const { parseDate, getDayCount } = require('../utils/date-utils')
 
 /** 本地存储键名 */
 const STORAGE_KEY = 'trips'
 
 /**
- * 从存储中加载旅行列表，若无缓存则使用模拟数据
+ * 从存储中加载旅行列表，并只读兼容旧版独立日程
  * @returns {Array<Object>} 旅行计划数组
  * @private
  */
 function _loadTrips() {
-  return getStorage(STORAGE_KEY) || MOCK_TRIPS
+  const expenses = loadExpenses()
+  const trips = readCollection(STORAGE_KEY)
+  const legacyDays = readCollection('itinerary')
+  return trips.map(trip => ({
+    ...trip,
+    itinerary: parseDate(trip.startDate) && parseDate(trip.endDate) && trip.endDate >= trip.startDate
+      ? normalizeItinerary(trip, trip.itinerary && trip.itinerary.length ? trip.itinerary
+        : Array.from({ length: getDayCount(trip.startDate, trip.endDate) }, (_, index) =>
+          legacyDays.find(day => day.tripId === trip.id && day.dayIndex === index + 1) || {}))
+      : (trip.itinerary || []),
+    spentBudget: spentForTrip(trip.id, expenses)
+  }))
 }
 
 /**
@@ -31,7 +45,7 @@ function _loadTrips() {
  * @private
  */
 function _saveTrips(trips) {
-  setStorage(STORAGE_KEY, trips)
+  if (!setStorage(STORAGE_KEY, trips)) throw new Error('旅行保存失败，请重试')
 }
 
 /**

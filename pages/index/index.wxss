@@ -44,7 +44,7 @@
 
 /* ========== 页面可滚动区域 ========== */
 .page-scroll {
-  height: calc(100vh - 300rpx);
+  height: auto;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -237,3 +237,14 @@
 .action-label {
   text-align: center;
 }
+
+/* Phone layout and touch targets */
+
+.header { padding-top: 32rpx; padding-bottom: 56rpx; }
+.header-content { padding: 0; gap: 16rpx; }
+.header-left { min-width: 0; }
+.avatar-wrap { flex-shrink: 0; margin-left: 0; }
+.stats-section { margin-top: 0; padding-top: 20rpx; }
+.quick-actions-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.quick-action-item { margin-bottom: 0; min-width: 0; }
+.page-scroll { padding-bottom: 24rpx; }

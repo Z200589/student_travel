@@ -8,7 +8,6 @@ const moneyUtils = require('../../utils/money-utils')
 const tripUtils = require('../../utils/trip-utils')
 const storageUtils = require('../../utils/storage-utils')
 const tripService = require('../../services/trip-service')
-const itineraryService = require('../../services/itinerary-service')
 
 Page({
   behaviors: [themeBehavior],
@@ -43,12 +42,12 @@ Page({
 
     // 快捷导航
     quickNavItems: [
-      { emoji: '📋', label: '每日行程', action: 'viewFullItinerary' },
-      { emoji: '📍', label: '景点', action: 'goToPlaces' },
-      { emoji: '💰', label: '预算', action: 'goToBudget' },
-      { emoji: '🧳', label: '行李', action: 'goToPacking' },
-      { emoji: '🍜', label: '美食', action: 'goToFood' },
-      { emoji: '📖', label: '日记', action: 'goToDiary' }
+      { icon: 'calendar', label: '每日行程', action: 'viewFullItinerary' },
+      { icon: 'pin', label: '景点', action: 'goToPlaces' },
+      { icon: 'wallet', label: '预算', action: 'goToBudget' },
+      { icon: 'bag', label: '行李', action: 'goToPacking' },
+      { icon: 'food', label: '美食', action: 'goToFood' },
+      { icon: 'diary', label: '日记', action: 'goToDiary' }
     ]
   },
 
@@ -167,6 +166,10 @@ Page({
     wx.navigateTo({ url: `/pages/budget/budget?tripId=${this.data.tripId}` })
   },
 
+  goToPoster() {
+    if (this.data.tripId) wx.navigateTo({ url: '/pages/poster/poster?tripId=' + encodeURIComponent(this.data.tripId) })
+  },
+
   goToPacking() {
     wx.navigateTo({ url: `/pages/packing/packing?tripId=${this.data.tripId}` })
   },
@@ -230,7 +233,7 @@ Page({
 
     // 默认通用建议
     if (tips.length === 0) {
-      tips.push({ icon: '🌏', title: '开始规划', content: '使用 AI 智能规划功能，一键生成完美行程。' })
+      tips.push({ icon: '🌏', title: '开始规划', content: '可以手动安排每天的活动，或从示例行程开始调整。' })
     }
 
     return tips

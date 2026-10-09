@@ -27,7 +27,9 @@ Component({
     /** 状态标签文字映射 */
     statusMap: {
       planning: '计划中',
+      upcoming: '即将出发',
       ongoing: '进行中',
+      ended: '已结束',
       completed: '已完成'
     },
     /** 状态颜色映射 */
@@ -41,7 +43,7 @@ Component({
   methods: {
     /** 卡片点击事件 */
     handleTap() {
-      this.triggerEvent('onTap', { id: this.data.trip.id, trip: this.data.trip });
+      this.triggerEvent('select', { tripId: this.data.trip.id });
     },
 
     /** 计算预算使用百分比 */

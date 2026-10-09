@@ -10,7 +10,7 @@
       <view class="input-wrap">
         <input
           class="form-input"
-          placeholder="请输入目的地，如：日本东京"
+          placeholder="请输入城市，如：杭州"
           value="{{form.destination}}"
           bindinput="onInput"
           data-field="destination"
@@ -135,26 +135,69 @@
       </view>
     </view>
 
+    <view class="font-sm text-secondary">示例仅使用已收录的真实地点，当前支持杭州、北京、成都；营业时间、预约和价格请另行核实。</view>
+    <view class="form-section route-section">
+      <view class="form-label font-md font-bold text-primary">🧭 我想去的地点</view>
+      <view class="place-search-panel">
+        <view class="font-bold">搜索真实地点</view>
+        <input class="place-search-input" value="{{placeQuery}}" bindinput="onSearchPlace" maxlength="50" placeholder="先填城市，再搜索名称，例如：灵隐" confirm-type="search" />
+        <view wx:if="{{placeQuery && !searchResults.length}}" class="font-sm text-secondary mt-sm">当前城市暂无匹配地点。可以换个名称，或在下面保留为待安排地点。</view>
+        <view class="search-result" wx:for="{{searchResults}}" wx:key="id">
+          <view class="search-result-info"><view class="font-bold">{{item.name}}</view><view class="font-xs text-secondary">{{item.city}} · {{item.matchLabel}}</view></view>
+          <button class="btn btn-secondary" data-id="{{item.id}}" disabled="{{item.selected}}" bindtap="onSelectSearchPlace">{{item.selected ? '已添加' : '添加'}}</button>
+        </view>
+        <view class="font-xs text-hint mt-sm">仅搜索已收录的杭州、北京、成都地点。相近名称需要你点选确认。</view>
+      </view>
+      <view class="input-wrap">
+        <textarea class="form-textarea" placeholder="例如：西湖、灵隐寺、河坊街（用顿号、逗号或换行分隔）" value="{{form.desiredPlaces}}" bindinput="onInput" data-field="desiredPlaces" maxlength="500" auto-height />
+      </view>
+      <view class="font-sm text-secondary mt-sm">不知道去哪？先填目的地，再从下面选择；已选地点可以在输入框里删除。</view>
+      <view wx:if="{{selectedPlaces.length}}" class="selected-place-list mt-md"><view class="font-sm text-secondary">已识别地点 · 点击移除</view><button wx:for="{{selectedPlaces}}" wx:key="id" class="selected-place" data-id="{{item.id}}" bindtap="onRemovePlace">{{item.name}} ×</button></view>
+      <view wx:if="{{unknownPlaces.length}}" class="font-sm text-secondary mt-sm">待确认：<text wx:for="{{unknownPlaces}}" wx:key="*this">{{item}}；</text>请搜索后添加正确地点，或保留原名称作为待安排内容。</view>
+      <view class="font-sm text-hint mt-sm">{{recommendationHint}}</view>
+      <view class="route-suggestion" wx:for="{{recommendations}}" wx:key="id" bindtap="onAddRecommended" data-name="{{item.name}}">
+        <view class="flex-between"><text class="font-bold text-primary">{{item.name}}</text><text class="text-brand">＋ 添加</text></view>
+        <view class="font-sm text-secondary mt-xs">{{item.recommendation}}</view>
+        <view class="font-xs text-hint mt-xs">建议预留 {{item.visitMinutes}} 分钟</view>
+        <view class="font-xs text-hint" wx:if="{{item.nearbyText}}">{{item.nearbyText}}</view>
+      </view>
+      <view class="btn btn-primary mt-md" bindtap="onPreviewRoute"><image class="button-icon" src="/assets/icons/route-white.png" mode="aspectFit" />按距离预览行程</view>
+      <view class="font-xs text-hint mt-sm">仅使用近似坐标和直线距离，不含路况、门票预约、开闭园限制及住宿往返；请自行核实。</view>
+      <view wx:if="{{routePreview}}" class="route-preview">
+        <view class="font-lg font-bold text-primary">规划预览 · 已安排 {{routePreview.scheduledCount}} 个地点</view>
+        <view wx:for="{{routePreview.itinerary}}" wx:for-item="day" wx:key="date" class="route-day">
+          <view class="font-bold text-primary">第{{day.day}}天 · {{day.date}}</view>
+          <view class="font-sm text-secondary">{{day.title}}</view>
+          <view class="font-xs text-hint">站点间直线距离合计约 {{day.routeDistanceKm}} 公里（非道路里程）</view>
+          <view wx:for="{{day.activities}}" wx:for-item="stop" wx:key="id" class="font-sm text-primary mt-xs">{{stop.time}} {{stop.name}} · 建议 {{stop.durationMinutes}} 分钟</view>
+        </view>
+        <view wx:if="{{routePreview.pending.length}}" class="route-pending">
+          <view class="font-bold">待安排地点（会随旅行一起保存）</view>
+          <view wx:for="{{routePreview.pending}}" wx:key="name" class="font-sm mt-xs">{{item.name}}：{{item.reason}}</view>
+        </view>
+        <view class="btn btn-primary mt-md" bindtap="onSaveRoute">保存这份规划</view>
+      </view>
+    </view>
     <!-- 底部间距 -->
-    <view style="height: 280rpx;"></view>
+    <view class="form-bottom-space"></view>
   </view>
 
   <!-- ========== 底部操作栏 ========== -->
   <view class="bottom-bar">
     <view class="btn btn-primary btn-block btn-lg generate-btn" bindtap="onGenerateAI" loading="{{generating}}">
-      <text wx:if="{{!generating}}">🤖 AI 智能生成行程</text>
-      <text wx:else>🤖 AI 正在规划中...</text>
+      <image wx:if="{{!generating}}" class="button-icon" src="/assets/icons/route-white.png" mode="aspectFit" /><text wx:if="{{!generating}}">{{form.desiredPlaces ? '按地点预览行程' : '生成真实地点示例'}}</text>
+      <text wx:else>🤖 正在生成示例...</text>
     </view>
     <view class="btn btn-secondary btn-block mt-sm" bindtap="onSubmitManual" disabled="{{generating}}">
-      📝 手动创建
+      <image class="button-icon" src="/assets/icons/action-edit.png" mode="aspectFit" />手动创建
     </view>
   </view>
 
   <!-- 生成中的全屏遮罩 -->
   <view class="generating-mask flex-center flex-col" wx:if="{{generating}}">
     <view class="generating-icon animate-pulse">🤖</view>
-    <view class="generating-title font-lg font-bold text-primary mt-md">AI 正在为您规划行程</view>
-    <view class="generating-desc font-sm text-secondary mt-sm">正在分析目的地、匹配最佳行程...</view>
+    <view class="generating-title font-lg font-bold text-primary mt-md">正在生成示例行程</view>
+    <view class="generating-desc font-sm text-secondary mt-sm">正在按已收录地点的距离和游玩时长安排</view>
     <view class="generating-dots mt-md">
       <view class="dot"></view>
       <view class="dot"></view>

@@ -507,6 +507,9 @@ describe('Mock工具函数 - deepClone', () => {
 describe('旅行服务 - tripService', () => {
   const tripService = require('../services/trip-service')
 
+  // Legacy suite explicitly opts into fixtures; production starts empty.
+  wx.setStorageSync('trips', JSON.parse(JSON.stringify(require('../data/mock-trips').MOCK_TRIPS)))
+  wx.setStorageSync('expenses', JSON.parse(JSON.stringify(require('../data/mock-expenses').MOCK_EXPENSES)))
   const trips = tripService.getAllTrips()
   assert.ok(Array.isArray(trips), 'getAllTrips 返回数组')
   assert.ok(trips.length > 0, 'getAllTrips 有数据')

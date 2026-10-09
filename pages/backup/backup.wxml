@@ -1,0 +1,19 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <view class="card">
+    <view class="title">把旅行记录保存下来</view>
+    <view class="hint">备份包含行程、账单、AA 成员与结算、景点、行李、美食和日记文本。图片文件和个人设置不包含在内。</view>
+    <button bindtap="onExport" disabled="{{busy}}">生成当前数据备份</button>
+    <view class="hint">生成后可分享文件给自己，或复制文本保存。备份包含同行人的名字与消费记录，请妥善保管。</view>
+    <button bindtap="onShare" disabled="{{busy || !raw}}">📤 分享备份文件</button>
+    <button bindtap="onCopy" disabled="{{busy || !raw}}">📋 复制备份文本</button>
+  </view>
+  <view class="card">
+    <view class="title">恢复已有备份</view>
+    <view class="hint">粘贴之前保存的完整备份文本，先检查内容，再确认恢复。已有本地数据时不会覆盖。</view>
+    <textarea value="{{raw}}" bindinput="onInput" maxlength="500000" disabled="{{busy}}" placeholder="粘贴备份 JSON 文本" />
+    <button bindtap="onPreview" disabled="{{busy || !raw}}">检查备份内容</button>
+    <view wx:if="{{summary}}" class="hint">旅行 {{summary.trips}} 个 · 账单 {{summary.expenses}} 笔 · 日记 {{summary.diaries}} 篇</view>
+    <button wx:if="{{summary}}" bindtap="onRestore" disabled="{{busy}}">恢复到空数据环境</button>
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+  </view>
+</view>

@@ -1,0 +1,14 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <view class="card" wx:if="{{pages.length}}">
+    <view class="font-xl font-bold">把每天的安排分享出去</view>
+    <view class="font-sm text-secondary mt-sm">选择一天生成海报，保存后可自行发给同行人。活动较多时分页展示。</view>
+    <picker range="{{pages}}" range-key="label" value="{{index}}" bindchange="onChoosePage" disabled="{{saving}}"><view class="poster-picker mt-md">{{pages[index].label}}　⌄</view></picker>
+    <view class="budget-option mt-md"><text>展示旅行总预算</text><switch checked="{{showBudget}}" bindchange="onBudget" disabled="{{saving}}" color="#079D69" /></view>
+  </view>
+  <view class="card" wx:if="{{error}}"><view>{{error}}</view><button wx:if="{{pages.length}}" class="btn btn-secondary mt-md" bindtap="generate">重新生成</button></view>
+  <view wx:if="{{rendering}}" class="text-center mt-lg">正在绘制海报…</view>
+  <view class="painter-host"><painter wx:if="{{palette}}" palette="{{palette}}" widthPixels="{{1050}}" use2D="{{false}}" data-token="{{token}}" bind:imgOK="onImageOK" bind:imgErr="onImageError" /></view>
+  <image wx:if="{{imagePath}}" class="poster-image" src="{{imagePath}}" mode="widthFix" bindtap="onPreview" />
+  <view wx:if="{{imagePath}}" class="poster-actions mt-md"><button class="btn btn-secondary" bindtap="onPreview">预览大图</button><button class="btn btn-primary" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">保存到相册</button></view>
+  <view wx:if="{{imagePath}}" class="font-sm text-secondary mt-md">每次保存当前一页。海报展示行程摘要，不含个人备注和 AA 账单；部分长文字会缩略。</view>
+</view>

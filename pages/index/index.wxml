@@ -20,12 +20,7 @@
     </view>
   </view>
 
-  <scroll-view
-    scroll-y
-    class="page-scroll"
-    enhanced
-    show-scrollbar="{{false}}"
-  >
+  <view class="page-scroll">
     <!-- ========== 快速统计行（水平滚动）========== -->
     <view class="stats-section">
       <scroll-view scroll-x class="stats-scroll" enhanced show-scrollbar="{{false}}">
@@ -69,7 +64,7 @@
     <view class="section animate-fade-in">
       <view class="section-header">
         <text class="section-title">📋 今日行程</text>
-        <text class="section-more" bindtap="goToTripDetail" wx:if="{{todayPlan}}">查看详情 ›</text>
+        <text class="section-more" bindtap="goToTripDetail" data-id="{{todayPlan.tripId}}" wx:if="{{todayPlan}}">查看详情 ›</text>
       </view>
       <view wx:if="{{todayPlan}}">
         <view class="card today-plan-card">
@@ -99,7 +94,7 @@
           wx:for="{{recentTrips}}"
           wx:key="id"
           trip="{{item}}"
-          bind:tap="goToTripDetail"
+          bind:select="goToTripDetail"
         />
       </view>
       <view wx:else class="empty-hint card flex-center" style="padding: 48rpx;">
@@ -161,7 +156,7 @@
           wx:key="label"
           bindtap="{{item.action}}"
         >
-          <text class="action-emoji">{{item.emoji}}</text>
+          <view class="action-icon-disc"><image class="action-icon" src="/assets/icons/action-{{item.icon}}.png" mode="aspectFit" /></view>
           <text class="action-label font-sm text-primary mt-xs">{{item.label}}</text>
         </view>
       </view>
@@ -169,5 +164,5 @@
 
     <!-- 底部安全区占位 -->
     <view style="height: 40rpx;"></view>
-  </scroll-view>
+  </view>
 </view>

@@ -5,14 +5,6 @@
 <view class="page {{isDarkMode ? 'dark' : ''}}">
   <!-- ========== 顶部标题栏 ========== -->
   <view class="page-header gradient-header">
-    <view class="header-top flex-between align-center">
-      <view class="back-btn flex-center" bindtap="goBack">
-        <text class="text-white font-lg">‹</text>
-      </view>
-      <text class="font-lg font-bold text-white">行程详情</text>
-      <view style="width: 64rpx;"></view>
-    </view>
-
     <view class="day-info" wx:if="{{dayData}}">
       <view class="flex-row align-center" style="gap: 12rpx; margin-bottom: 8rpx;">
         <view class="day-index-badge flex-center">
@@ -24,7 +16,7 @@
     </view>
   </view>
 
-  <scroll-view scroll-y class="day-scroll" enhanced show-scrollbar="{{false}}">
+  <view class="day-scroll">
     <!-- ========== 上午行程 ========== -->
     <view class="section animate-fade-in">
       <view class="period-header flex-row align-center">
@@ -32,7 +24,7 @@
         <text class="period-title font-lg font-bold text-primary">上午</text>
       </view>
       <view wx:if="{{morningActivities.length > 0}}">
-        <view class="card activity-card" wx:for="{{morningActivities}}" wx:key="index">
+        <view class="card activity-card" wx:for="{{morningActivities}}" wx:key="index" bindlongpress="onEditActivity" data-index="{{index}}" data-period="morning">
           <view class="flex-between align-start">
             <view style="flex: 1;">
               <view class="flex-row align-center" style="gap: 12rpx;">
@@ -68,7 +60,7 @@
         <text class="period-title font-lg font-bold text-primary">下午</text>
       </view>
       <view wx:if="{{afternoonActivities.length > 0}}">
-        <view class="card activity-card" wx:for="{{afternoonActivities}}" wx:key="index">
+        <view class="card activity-card" wx:for="{{afternoonActivities}}" wx:key="index" bindlongpress="onEditActivity" data-index="{{index}}" data-period="afternoon">
           <view class="flex-between align-start">
             <view style="flex: 1;">
               <view class="flex-row align-center" style="gap: 12rpx;">
@@ -102,7 +94,7 @@
         <text class="period-title font-lg font-bold text-primary">晚上</text>
       </view>
       <view wx:if="{{eveningActivities.length > 0}}">
-        <view class="card activity-card" wx:for="{{eveningActivities}}" wx:key="index">
+        <view class="card activity-card" wx:for="{{eveningActivities}}" wx:key="index" bindlongpress="onEditActivity" data-index="{{index}}" data-period="evening">
           <view class="flex-between align-start">
             <view style="flex: 1;">
               <view class="flex-row align-center" style="gap: 12rpx;">
@@ -196,5 +188,5 @@
         </view>
       </view>
     </view>
-  </scroll-view>
+  </view>
 </view>

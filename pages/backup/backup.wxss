@@ -1,0 +1,7 @@
+.container{padding:24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom));min-height:100vh;box-sizing:border-box;background:var(--bg-color,#f6f7fb)}
+.card{padding:28rpx;margin-bottom:24rpx;border-radius:24rpx;background:var(--card-bg,#fff)}
+.title{font-size:34rpx;font-weight:600;color:var(--text-primary,#222)}
+.hint{font-size:26rpx;line-height:1.7;margin:20rpx 0;color:var(--text-secondary,#666)}
+button{margin-top:20rpx;min-height:88rpx;border-radius:44rpx;font-size:28rpx;background:#e9f8ef;color:#087e40}
+textarea{width:100%;height:260rpx;box-sizing:border-box;padding:20rpx;background:var(--bg-color,#f6f7fb);border-radius:16rpx;font-size:24rpx;color:var(--text-primary,#222)}
+.error{margin-top:24rpx;color:#be3737;font-size:26rpx;line-height:1.6}

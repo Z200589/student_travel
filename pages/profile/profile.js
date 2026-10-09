@@ -33,6 +33,7 @@ Page({
   },
 
   onShow() {
+    this.calcStats()
     this.setData({
       darkMode: getApp().globalData.isDarkMode || false
     })
@@ -90,20 +91,34 @@ Page({
 
   onClearCache() {
     wx.showModal({
-      title: '清除缓存',
-      content: '确定要清除所有本地缓存数据吗？此操作不可恢复。',
+      title: '删除全部本地数据',
+      content: '这会删除本机的旅行、活动、账单和设置，无法恢复。确定删除吗？',
       success: (res) => {
         if (res.confirm) {
-          clearStorage()
+          if (!clearStorage()) {
+            wx.showToast({ title: '删除失败，请重试', icon: 'none' })
+            return
+          }
+          this.calcStats()
           this.setData({ cacheSize: '0' })
-          wx.showToast({ title: '缓存已清除', icon: 'success' })
+          wx.showToast({ title: '本地数据已删除', icon: 'success' })
         }
       }
     })
   },
 
+  onCloud() { wx.navigateTo({url:'/pages/cloud/cloud'}) },
   onExportData() {
-    wx.showToast({ title: '功能开发中...', icon: 'none' })
+    wx.navigateTo({ url: '/pages/backup/backup' })
+  },
+
+  onAddExampleTrip() {
+    try {
+      const trip = require('../../services/example-trip-service').addExampleTrip()
+      wx.navigateTo({ url: `/pages/trip-detail/trip-detail?tripId=${trip.id}` })
+    } catch (error) {
+      wx.showToast({ title: '示例保存失败，请重试', icon: 'none' })
+    }
   },
 
   onVersionTap() {

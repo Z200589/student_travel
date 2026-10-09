@@ -1,7 +1,7 @@
 Component({
   properties: {
     expense: { type: Object, value: {} },
-    categories: { type: Array, value: [] }
+    categories: { type: Object, value: {} }
   },
   methods: {
     onDelete() {

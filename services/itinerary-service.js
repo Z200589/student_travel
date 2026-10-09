@@ -1,7 +1,7 @@
 /**
  * 行程安排服务模块
  * 提供每日行程的 CRUD 操作及模拟行程生成功能
- * 基于本地存储实现，首次调用自动加载模拟数据
+ * 与旅行页面共用 Trip 内的日程，不再写入独立 itinerary 存储
  *
  * v1.10.0 改进：引入智能行程生成算法，支持旅行风格适配、
  * 节奏控制、主题日规划和自适应景点分配策略
@@ -18,30 +18,46 @@
  * @author WuSuBuDuoMing
  */
 
-const { getStorage, setStorage } = require('../utils/storage-utils')
+const tripService = require('./trip-service')
 const { generateId, randomFromArray } = require('../utils/mock-utils')
 const { getDayCount, formatDate } = require('../utils/date-utils')
-const { MOCK_ITINERARY } = require('../data/mock-itinerary')
-
-/** 本地存储键名 */
-const STORAGE_KEY = 'itinerary'
-
-/**
- * 从存储中加载行程数据，若无缓存则使用模拟数据
- * @returns {Array<Object>} 行程安排数组
- * @private
- */
+// Public dayIndex remains one-based for compatibility with the original API.
 function _loadItinerary() {
-  return getStorage(STORAGE_KEY) || MOCK_ITINERARY
+  return tripService.getAllTrips().flatMap(trip => (trip.itinerary || []).map((day, index) => {
+    const periods = { morning: [], afternoon: [], evening: [] }
+    ;(day.activities || []).forEach(activity => {
+      const hour = parseInt(activity.time, 10)
+      const period = hour >= 6 && hour < 12 ? 'morning' : hour >= 12 && hour < 18 ? 'afternoon' : 'evening'
+      periods[period].push(activity.name)
+    })
+    return { ...day, ...periods, tripId: trip.id, dayIndex: index + 1 }
+  }))
 }
 
-/**
- * 保存行程数据到本地存储
- * @param {Array<Object>} itinerary - 要保存的行程数组
- * @private
- */
-function _saveItinerary(itinerary) {
-  setStorage(STORAGE_KEY, itinerary)
+function _saveDay(tripId, dayIndex, changes) {
+  const trip = tripService.getTripById(tripId)
+  if (!trip) throw new Error('旅行不存在')
+  if (!Number.isInteger(dayIndex) || dayIndex < 1 || dayIndex > trip.itinerary.length) {
+    throw new Error('日程超出旅行日期范围')
+  }
+  const previous = trip.itinerary[dayIndex - 1]
+  const updated = { ...previous, ...changes, id: previous.id, date: previous.date,
+    day: dayIndex, dayIndex, tripId }
+  if (['morning', 'afternoon', 'evening'].some(key => Object.prototype.hasOwnProperty.call(changes, key)) &&
+      !Object.prototype.hasOwnProperty.call(changes, 'activities')) {
+    const periods = { morning: [], afternoon: [], evening: [] }
+    ;(previous.activities || []).forEach(activity => {
+      const hour = parseInt(activity.time, 10)
+      const period = hour >= 6 && hour < 12 ? 'morning' : hour >= 12 && hour < 18 ? 'afternoon' : 'evening'
+      periods[period].push(activity)
+    })
+    updated.activities = Object.keys(periods).flatMap((period, index) =>
+      (changes[period] || periods[period]).map(activity => typeof activity === 'string'
+        ? { name: activity, time: ['09:00', '14:00', '19:00'][index] } : activity))
+  }
+  trip.itinerary[dayIndex - 1] = updated
+  tripService.updateTrip(tripId, { itinerary: trip.itinerary })
+  return getDayPlan(tripId, dayIndex)
 }
 
 /**
@@ -693,40 +709,20 @@ function getDayPlan(tripId, dayIndex) {
  * @returns {Object} 新创建的日程
  */
 function createDayPlan(data) {
-  const itinerary = _loadItinerary()
-  const newPlan = {
-    id: generateId('day'),
-    ...data
-  }
-  itinerary.push(newPlan)
-  _saveItinerary(itinerary)
-  return newPlan
+  return _saveDay(data.tripId, data.dayIndex, data)
 }
 
-/**
- * 更新日程安排
- * 合并传入的字段到已有日程中
- * @param {string} id - 日程 ID
- * @param {Object} updates - 要更新的字段
- * @returns {Object|null} 更新后的日程，未找到返回 null
- */
 function updateDayPlan(id, updates) {
-  const itinerary = _loadItinerary()
-  const idx = itinerary.findIndex(item => item.id === id)
-  if (idx === -1) return null
-  itinerary[idx] = { ...itinerary[idx], ...updates }
-  _saveItinerary(itinerary)
-  return itinerary[idx]
+  const day = _loadItinerary().find(item => item.id === id)
+  return day ? _saveDay(day.tripId, day.dayIndex, updates) : null
 }
 
-/**
- * 删除日程安排
- * @param {string} id - 日程 ID
- * @returns {boolean} 始终返回 true
- */
+// The date slot remains; delete clears its contents rather than shifting days.
 function deleteDayPlan(id) {
-  const itinerary = _loadItinerary().filter(item => item.id !== id)
-  _saveItinerary(itinerary)
+  const day = _loadItinerary().find(item => item.id === id)
+  if (!day) return false
+  _saveDay(day.tripId, day.dayIndex, { title: '第' + day.dayIndex + '天', activities: [],
+    morning: [], afternoon: [], evening: [], tips: [], transport: '', backupPlan: '', estimatedCost: 0, actualCost: 0 })
   return true
 }
 

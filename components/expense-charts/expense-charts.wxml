@@ -1,0 +1,14 @@
+<view class="charts {{dark ? 'dark' : ''}}">
+  <view class="chart-error" wx:if="{{error}}">{{error}}</view>
+  <view wx:if="{{hasData}}">
+    <view class="chart-title">消费分布 · ¥{{summary.total}}</view>
+    <view class="chart-canvas"><ec-canvas id="category" canvas-id="category-spend" ec="{{ec}}" /></view>
+    <view class="chart-line" wx:for="{{summary.categories}}" wx:key="name"><text>{{item.name}}</text><text>¥{{item.amount}}</text></view>
+    <view class="chart-title">每日消费</view>
+    <view class="chart-canvas"><ec-canvas id="daily" canvas-id="daily-spend" ec="{{ec}}" /></view>
+    <view class="chart-hint" wx:if="{{summary.daily.length > 7}}">图表可横向滑动查看其他日期</view>
+    <view class="daily-list"><view class="chart-line" wx:for="{{summary.daily}}" wx:key="date"><text>{{item.date}}</text><text>¥{{item.amount}}</text></view></view>
+    <view class="chart-hint">包含普通消费与 AA 共同消费，线下结算不计入花费。</view>
+  </view>
+  <view wx:elif="{{!error}}" class="chart-hint">记下第一笔消费后，这里会展示消费分布与每日趋势。</view>
+</view>

@@ -203,3 +203,7 @@
   background: var(--brand-primary-light);
   color: var(--brand-primary);
 }
+
+.detail-sheet { box-sizing: border-box; padding-bottom: env(safe-area-inset-bottom); }
+.detail-close { min-width: 44px; min-height: 44px; box-sizing: border-box; text-align: center; }
+.detail-title { min-width: 0; }

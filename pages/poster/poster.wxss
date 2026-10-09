@@ -1,0 +1,7 @@
+.container { padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }
+.poster-picker { background: var(--bg-primary); padding: 20rpx; border-radius: 16rpx; min-height: 44px; box-sizing: border-box; }
+.budget-option { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.poster-image { width: 100%; display: block; border-radius: 20rpx; margin-top: 24rpx; }
+.poster-actions { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.poster-actions .btn { flex: 1; min-width: 120px; margin: 0; }
+.painter-host { height: 0; overflow: hidden; }

@@ -54,7 +54,7 @@ page {
 }
 
 /* ========== 暗黑模式 ========== */
-page.dark {
+page.dark, .page.dark, .container.dark {
   --bg-primary: #0F172A;
   --bg-secondary: #1E293B;
   --bg-card: #1E293B;
@@ -366,3 +366,29 @@ page.dark {
 .animate-pulse {
   animation: pulse 2s infinite;
 }
+
+/* Phone layout and touch targets */
+
+.page { width: 100%; overflow-wrap: break-word; }
+.btn, .card, .input-wrap, .bottom-bar, .modal-content { box-sizing: border-box; }
+.btn { min-height: 44px; gap: 12rpx; line-height: 1.4; text-align: center; }
+.flex-1, .search-input, .activity-name { min-width: 0; }
+.activity-name { flex: 1; }
+.activity-time { flex-shrink: 0; }
+.section-header { gap: 16rpx; }
+.section-title { min-width: 0; }
+.section-more { min-height: 44px; display: flex; align-items: center; flex-shrink: 0; }
+.action-icon-disc { width: 88rpx; height: 88rpx; border-radius: 50%; background: #E8F8EF; display: flex; align-items: center; justify-content: center; margin-bottom: 12rpx; flex-shrink: 0; }
+.action-icon { display: block; width: 52rpx; height: 52rpx; }
+.button-icon { width: 40rpx; height: 40rpx; flex-shrink: 0; }
+.fab-symbol { width: 48rpx; height: 48rpx; }
+.modal-content { padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }
+.modal-close { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+@media (max-width: 360px) {
+  .font-xs { font-size: 12px; }
+  .font-sm { font-size: 13px; }
+  .btn { padding-left: 24rpx; padding-right: 24rpx; }
+}
+
+
+.filter-tab, .cat-pill { min-height: 44px; box-sizing: border-box; }

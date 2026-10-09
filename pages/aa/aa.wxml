@@ -1,0 +1,42 @@
+<view class="container {{isDarkMode ? 'dark' : ''}}">
+  <view class="card" wx:if="{{error}}"><text>{{error}}</text><button class="btn btn-secondary mt-md" bindtap="refresh">重新加载</button></view>
+  <block wx:else>
+    <view class="card aa-summary">
+      <view class="font-xl font-bold">一起出发，明白记账</view>
+      <view class="font-sm mt-sm">本机账本 · 人民币 · 暂不跨手机同步</view>
+      <view class="font-title font-bold mt-md">¥{{sharedTotal}}</view>
+      <view>共同消费总额</view>
+      <view class="font-sm mt-sm" wx:if="{{excludedCount}}">另有 {{excludedCount}} 笔普通消费未分摊，仍计入旅行总支出。</view>
+    </view>
+    <view class="card">
+      <view class="section-title">同行成员</view>
+      <view class="font-sm text-secondary mt-sm">添加真实同行人的称呼；人数不会自动生成成员。</view>
+      <view class="member-add mt-md"><input class="aa-input" maxlength="20" placeholder="例如：小林" value="{{memberName}}" data-field="memberName" bindinput="onInput" /><button class="btn btn-secondary" bindtap="onAddMember">添加</button></view>
+      <view class="member-row" wx:for="{{members}}" wx:key="id">
+        <view><view class="font-bold">{{item.name}}</view><button class="member-edit" data-id="{{item.id}}" bindtap="onRename">✎ 改名</button><view class="font-sm text-secondary">已付 ¥{{item.paid}} · 应摊 ¥{{item.share}}</view></view>
+        <text class="text-brand balance">{{item.balanceLabel}}</text>
+      </view>
+    </view>
+    <view id="expense-form" class="card" wx:if="{{members.length}}">
+      <view class="section-title">{{editingId ? '编辑共同消费' : '记一笔共同消费'}}</view><view wx:if="{{editingId}}" class="font-sm text-secondary mt-sm">保存后重新计算分摊与余额，已经记录的线下转账仍保留。</view>
+      <text class="aa-label">金额（元）</text><input class="aa-input" type="digit" maxlength="12" placeholder="0.00" value="{{amount}}" data-field="amount" bindinput="onInput" />
+      <text class="aa-label">消费说明</text><input class="aa-input" maxlength="100" placeholder="例如：三人午餐" value="{{description}}" data-field="description" bindinput="onInput" />
+      <text class="aa-label">谁先付款</text><picker range="{{members}}" range-key="name" value="{{payerIndex}}" bindchange="onPayer"><view class="aa-input">{{members[payerIndex].name}}　⌄</view></picker>
+      <text class="aa-label">谁参与平摊（可不包含付款人）</text>
+      <checkbox-group bindchange="onParticipants" class="participants"><label wx:for="{{members}}" wx:key="id" class="participant"><checkbox value="{{item.id}}" checked="{{item.selected}}" color="#079D69" /><text>{{item.name}}</text></label></checkbox-group>
+      <view class="font-xs text-secondary">按成员添加顺序分配不足一分的余数，合计始终等于消费金额。</view>
+      <view wx:if="{{preview.length}}" class="aa-preview mt-md"><view wx:for="{{preview}}" wx:key="name">{{item.name}}：¥{{item.amount}}</view></view>
+      <text class="aa-label">分类</text><picker range="{{categories}}" range-key="label" value="{{categoryIndex}}" bindchange="onCategory"><view class="aa-input">{{categories[categoryIndex].label}}　⌄</view></picker>
+      <text class="aa-label">日期</text><picker mode="date" value="{{date}}" bindchange="onDate"><view class="aa-input">{{date}}</view></picker>
+      <button class="btn btn-primary mt-lg" loading="{{saving}}" disabled="{{saving}}" bindtap="onSave"><image class="button-icon" src="/assets/icons/plus-white.png" />{{editingId ? '保存修改' : '保存 AA 消费'}}</button><button wx:if="{{editingId}}" class="btn btn-outline mt-sm" bindtap="onCancelEdit">取消编辑</button>
+    </view>
+    <view class="card">
+      <view class="section-title">结算建议</view>
+      <view class="font-sm text-secondary mt-sm">请实际转账后再标记。结算只抵消成员余额，不增加旅行花费。</view>
+      <view wx:if="{{!suggestions.length}}" class="mt-md">当前没有待结算金额</view>
+      <view class="settlement-row" wx:for="{{suggestions}}" wx:key="index"><view>{{item.fromName}} → {{item.toName}} <text class="font-bold">¥{{item.amount}}</text></view><button class="btn btn-secondary mt-sm" data-index="{{index}}" bindtap="onSettle">已线下支付</button></view>
+    </view>
+    <view class="card" wx:if="{{settlements.length}}"><view class="section-title">已记录的结算</view><view class="settlement-row" wx:for="{{settlements}}" wx:key="id"><view>{{item.fromName}} → {{item.toName}} · ¥{{item.amount}}</view><button class="btn btn-outline mt-sm" data-id="{{item.id}}" bindtap="onUndo">撤销记录</button></view></view>
+    <view class="card" wx:if="{{expenses.length}}"><view class="section-title">AA 消费明细</view><view class="settlement-row" wx:for="{{expenses}}" wx:key="id"><view class="font-bold">{{item.description}} · ¥{{item.amountText}}</view><view class="font-sm text-secondary">{{item.date}} · {{item.payerName}} 付款</view><view class="font-sm mt-sm">{{item.shareText}}</view><button class="btn btn-secondary mt-sm" data-id="{{item.id}}" bindtap="onEdit">✎ 编辑消费</button><button class="btn btn-outline mt-sm" data-id="{{item.id}}" bindtap="onDelete">删除这笔消费</button></view></view>
+  </block>
+</view>
